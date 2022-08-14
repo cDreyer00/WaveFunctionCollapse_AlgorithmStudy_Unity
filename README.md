@@ -1,1 +1,1 @@
-# WaveFunctionCollapse_AlgorithmStudy_Unityi
+# WaveFunctionCollapse_AlgorithmStudy_Unity
