@@ -6,10 +6,12 @@ public class WaveFunctionCollapse : MonoBehaviour
 {
     [SerializeField] int gridWidth;
     [SerializeField] int gridHeight;
-    
+
     [SerializeField] GameObject[] sprites;
 
-    [SerializeField] List<CellGrid> grids = new();
+    [SerializeField] List<CellGrid> cells = new();
+
+    List<CellGrid> lowEntropyGrids = new();
 
     void Start()
     {
@@ -21,10 +23,10 @@ public class WaveFunctionCollapse : MonoBehaviour
     {
         for (int i = 0; i < gridHeight; i++)
         {
-            for(int k = 0; k < gridWidth; k++)
+            for (int k = 0; k < gridWidth; k++)
             {
                 CellGrid cg = new CellGrid(sprites, Vector2.right * k + Vector2.up * i);
-                grids.Add(cg);
+                cells.Add(cg);
             }
         }
     }
@@ -32,15 +34,37 @@ public class WaveFunctionCollapse : MonoBehaviour
     void SortStartingPoint()
     {
         int randPoint = Random.Range(0, gridWidth);
-        Collapse(grids[randPoint]);
+        Collapse(cells[randPoint]);
     }
 
-    void Collapse(CellGrid gridInfo)
+    void Collapse(CellGrid cell)
     {
-        int rs = Random.Range(0, gridInfo.sprites.Count);
-        Instantiate(gridInfo.sprites[rs], gridInfo.coordinate, Quaternion.identity);
+        int rs = Random.Range(0, cell.sprites.Count);
+        Instantiate(cell.sprites[rs], cell.coordinate, Quaternion.identity);
 
-        gridInfo.collapsed = true;
+        cell.collapsed = true;
+        CalculeCellPossibilities(cell);
+    }
+
+    void CalculeCellPossibilities(CellGrid cell)
+    {
+        int index = cells.IndexOf(cell);
+        int upperCellID = index + 1 * gridWidth;
+        int downCellID = index - 1 * gridWidth;
+
+
+
+        if (upperCellID < cells.Count)
+        {
+            CellGrid upCell = cells[upperCellID];
+            Instantiate(upCell.sprites[0], upCell.coordinate, Quaternion.identity);
+        }
+            
+        if (downCellID > 0)
+        {   
+            CellGrid downCell = cells[downCellID];
+            Instantiate(downCell.sprites[0], downCell.coordinate, Quaternion.identity);
+        }
     }
 
     // void OnDrawGizmosSelected()
@@ -54,5 +78,4 @@ public class WaveFunctionCollapse : MonoBehaviour
     //         }
     //     }
     // }
-
 }
